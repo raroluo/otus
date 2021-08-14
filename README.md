@@ -1,4 +1,4 @@
-### "[Network engineer](https://otus.ru/lessons/setevoy-inzhener/)" from [OTUS.RU](https://otus.ru/)
+### "otus.ru [Network engineer](https://otus.ru/lessons/setevoy-inzhener/)"
 
-- [Practical work](labs/).
-- [Project work](final/).
+- [Practical work](labs/)
+- [Project work](final/)
