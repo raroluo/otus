@@ -1,5 +1,4 @@
-
-### Configure Router-on-a-Stick Inter-VLAN Routing
+# Configure Router-on-a-Stick Inter-VLAN Routing
 
 ![](scheme.png)
 
@@ -39,7 +38,7 @@ r1(config-if)#end
 ```
 
 ## SW1
-# SW1 VLAN config
+### SW1 VLAN config
 ```
 Switch>enable
 Switch#configure terminal
@@ -79,7 +78,7 @@ VLAN Name                             Status    Ports
 1004 fddinet-default                  act/unsup
 1005 trnet-default                    act/unsup
 ```
-# SW1 trunk to SW2
+### SW1 trunk to SW2
 ```
 sw1#configure terminal
 sw1(config)#interface e0/1
@@ -119,7 +118,7 @@ Capture VLANs Allowed: ALL
 Appliance trust: none
 ```
 
-# SW1 trunk to R1
+### SW1 trunk to R1
 ```
 sw1#configure terminal
 sw1(config)#interface e2/0
@@ -131,7 +130,7 @@ sw1(config-if)#end
 ```
 
 ## SW2
-# SW2 VLAN config
+### SW2 VLAN config
 ```
 Switch>enable
 Switch#configure terminal
@@ -170,7 +169,7 @@ VLAN Name                             Status    Ports
 1005 trnet-default                    act/unsup
 ```
 
-# SW2 trunk to SW1
+### SW2 trunk to SW1
 ```
 sw2#configure terminal
 sw2(config)#interface e0/1
