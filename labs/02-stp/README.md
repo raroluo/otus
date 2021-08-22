@@ -1,4 +1,4 @@
-### STP (Spanning Tree) protocol
+# STP (Spanning Tree) protocol
 
 ![](scheme.png)
 
