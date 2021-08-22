@@ -1,6 +1,8 @@
-# STP (Spanning Tree) protocol
+### STP (Spanning Tree) protocol
 
-##SW1
+![](scheme.png)
+
+## SW1
 ```
 Switch>enable
 Switch#conf t
@@ -28,7 +30,7 @@ sw1(config-if)#end
 sw1#copy running-config startup-config
 ```
 
-#SW2
+## SW2
 ```
 Switch>enable
 Switch#conf t
@@ -57,7 +59,7 @@ sw2(config-if)#end
 sw2#copy running-config startup-config
 ```
 
-##SW3
+## SW3
 ```
 Switch>enable
 Switch#conf t
@@ -109,7 +111,7 @@ Sending 5, 100-byte ICMP Echos to 192.168.1.3, timeout is 2 seconds:
 Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
 ```
 
-##SW1 enable trunking ports
+## SW1 enable trunking ports
 ```
 sw1#conf t
 sw1(config)#interface e0/0
@@ -143,8 +145,7 @@ sw1(config-if)#no shutdown
 sw1(config-if)#int eth 0/3
 sw1(config-if)#no shutdown
 ```
-
-##SW2 enable trunking ports
+## SW2 enable trunking ports
 ```
 sw2#conf t
 sw2(config)#interface e0/0
@@ -176,7 +177,7 @@ sw2(config-if)#no shutdown
 sw2(config-if)#int eth 0/3
 sw2(config-if)#no shutdown
 ```
-##SW3 enable trunking ports
+## SW3 enable trunking ports
 ```
 sw3#conf t
 sw3(config)#interface e0/0
@@ -320,7 +321,7 @@ Et0/1               Altn BLK 100       128.2    Shr
 Et0/3               Root FWD 100       128.4    Shr
 ```
 
-##Disable STP cost for port
+## Disable STP cost
 
 ```
 sw1(config)#int eth 0/1
