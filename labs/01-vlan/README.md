@@ -376,7 +376,6 @@ Appliance trust: none
 
 ```
 
-```
 ## Ping test from PC1 to R1 gateway
 ```
 VPCS> ping 192.168.3.1
