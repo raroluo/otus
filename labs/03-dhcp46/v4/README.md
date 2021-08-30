@@ -2,18 +2,6 @@
 
 ![](scheme.png)
 
-## VPC1 configuration
-```
-VPCS> ip dhcp -d
-VPCS> save vpc1
-```
-
-## VPC2 configuration
-```
-VPCS> ip dhcp -d
-VPCS> save vpc2
-```
-
 ## R1 configuration
 ```
 Router>enable
@@ -185,29 +173,32 @@ L        192.168.1.97/32 is directly connected, Ethernet0/1
 ```
 r1#conf t
 r1(config)#ip dhcp pool vlan100DHCP
-r1(dhcp-config)#network 192.168.1.1 255.255.255.192
+r1(dhcp-config)#network 192.168.1.0 255.255.255.192
 r1(dhcp-config)#domain-name ccna-lab.com
 r1(dhcp-config)#default-router 192.168.1.1
 r1(dhcp-config)#lease 2
+r1(dhcp-config)#ip dhcp excluded-address 192.168.1.1
 r1(dhcp-config)#end
 r1#conf t
 r1(config)#ip dhcp pool vlan200DHCP
-r1(dhcp-config)#network 192.168.1.65 255.255.255.224
+r1(dhcp-config)#network 192.168.1.64 255.255.255.224
 r1(dhcp-config)#domain-name ccna-lab.com
 r1(dhcp-config)#default-router 192.168.1.65
 r1(dhcp-config)#lease 2
+r1(dhcp-config)#ip dhcp excluded-address 192.168.1.65
 r1(dhcp-config)#end
 r1#conf t
 r1(config)#ip dhcp pool r2clientsDHCP
-r1(dhcp-config)#network 192.168.1.97 255.255.255.240
+r1(dhcp-config)#network 192.168.1.96 255.255.255.240
 r1(dhcp-config)#domain-name ccna-lab.com
 r1(dhcp-config)#default-router 192.168.1.97
 r1(dhcp-config)#lease 2
+r1(dhcp-config)#ip dhcp excluded-address 192.168.1.97
 ```
 ## Configure DHCP Relay on R2
 ```
 r2#conf t
-r2(config)#int eth 0/0
+r2(config)#int eth 0/1
 r2(config-if)#ip helper-address 192.168.1.1
 ```
 
@@ -477,4 +468,111 @@ Capture Mode Disabled
 Capture VLANs Allowed: ALL
 
 Appliance trust: none
+```
+## VPC1 IP configuration
+```
+VPCS> ip dhcp -d
+
+Opcode: 1 (REQUEST)
+Client IP Address: 192.168.1.3
+Your IP Address: 0.0.0.0
+Server IP Address: 0.0.0.0
+Gateway IP Address: 0.0.0.0
+Client MAC Address: 00:50:79:66:68:05
+Option 53: Message Type = Request
+Option 54: DHCP Server = 192.168.1.1
+Option 50: Requested IP Address = 192.168.1.3
+Option 61: Client Identifier = Hardware Type=Ethernet MAC Address = 00:50:79:66:68:05
+Option 12: Host Name = VPCS1
+
+Opcode: 2 (REPLY)
+Client IP Address: 192.168.1.3
+Your IP Address: 192.168.1.3
+Server IP Address: 0.0.0.0
+Gateway IP Address: 0.0.0.0
+Client MAC Address: 00:50:79:66:68:05
+Option 53: Message Type = Ack
+Option 54: DHCP Server = 192.168.1.1
+Option 51: Lease Time = 86400
+Option 58: Renewal Time = 43200
+Option 59: Rebinding Time = 75600
+Option 1: Subnet Mask = 255.255.255.192
+Option 15: Domain = ccna-lab.com
+Option 3: Router = 192.168.1.1
+
+ IP 192.168.1.3/26 GW 192.168.1.1
+
+VPCS> save vpc1
+```
+
+## VPC2 IP configuration
+```
+VPCS> ip dhcp -d
+
+Opcode: 1 (REQUEST)
+Client IP Address: 192.168.1.98
+Your IP Address: 0.0.0.0
+Server IP Address: 0.0.0.0
+Gateway IP Address: 0.0.0.0
+Client MAC Address: 00:50:79:66:68:06
+Option 53: Message Type = Request
+Option 54: DHCP Server = 10.0.0.1
+Option 50: Requested IP Address = 192.168.1.98
+Option 61: Client Identifier = Hardware Type=Ethernet MAC Address = 00:50:79:66:68:06
+Option 12: Host Name = VPCS1
+
+Opcode: 2 (REPLY)
+Client IP Address: 192.168.1.98
+Your IP Address: 192.168.1.98
+Server IP Address: 0.0.0.0
+Gateway IP Address: 192.168.1.97
+Client MAC Address: 00:50:79:66:68:06
+Option 53: Message Type = Ack
+Option 54: DHCP Server = 10.0.0.1
+Option 51: Lease Time = 172800
+Option 58: Renewal Time = 86400
+Option 59: Rebinding Time = 151200
+Option 1: Subnet Mask = 255.255.255.240
+Option 15: Domain = ccna-lab.com
+Option 3: Router = 192.168.1.97
+
+ IP 192.168.1.98/28 GW 192.168.1.97
+
+VPCS> save vpc2
+```
+
+## Test DHCPv4 configuration on R1
+```
+r1#show ip dhcp binding
+Bindings from all pools not associated with VRF:
+IP address          Client-ID/              Lease expiration        Type
+                    Hardware address/
+                    User name
+192.168.1.3         0100.5079.6668.05       Aug 31 2021 10:50 PM    Automatic
+192.168.1.98        0100.5079.6668.06       Sep 01 2021 11:13 PM    Automatic
+```
+```
+r1#show ip dhcp server statistics
+Memory usage         43442
+Address pools        3
+Database agents      0
+Automatic bindings   2
+Manual bindings      0
+Expired bindings     0
+Malformed messages   0
+Secure arp entries   0
+
+Message              Received
+BOOTREQUEST          0
+DHCPDISCOVER         14
+DHCPREQUEST          3
+DHCPDECLINE          0
+DHCPRELEASE          0
+DHCPINFORM           0
+
+Message              Sent
+BOOTREPLY            0
+DHCPOFFER            3
+DHCPACK              3
+DHCPNAK              0
 ```
