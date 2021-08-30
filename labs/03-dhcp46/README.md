@@ -79,12 +79,31 @@ Ethernet0/3                unassigned      YES NVRAM  administratively down down
 ## R1 adding static routes
 ```
 r1#conf t
-r1(config)#ip route 192.168.1.0 255.255.255.192.10.0.0.2
-r1(config)#ip route 192.168.1.64 255.255.255.224 10.0.0.2
+r1(config)#ip route 192.168.1.96 255.255.255.240 10.0.0.2
 ```
 ```
 r1#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
 
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.0.0/30 is directly connected, Ethernet0/0
+L        10.0.0.1/32 is directly connected, Ethernet0/0
+      192.168.1.0/24 is variably subnetted, 5 subnets, 4 masks
+C        192.168.1.0/26 is directly connected, Ethernet0/1.100
+L        192.168.1.1/32 is directly connected, Ethernet0/1.100
+C        192.168.1.64/27 is directly connected, Ethernet0/1.200
+L        192.168.1.65/32 is directly connected, Ethernet0/1.200
+S        192.168.1.96/28 [1/0] via 10.0.0.2
 ```
 ## R2 configuration
 ```
@@ -136,11 +155,31 @@ Ethernet0/3                unassigned      YES NVRAM  administratively down down
 ## R2 adding static routes
 ```
 r2#conf t
-r2(config)#ip route 192.168.1.96 255.255.255.240 10.0.0.1
+r2(config)#ip route 192.168.1.0 255.255.255.192 10.0.0.1
+r2(config)#ip route 192.168.1.64 255.255.255.224 10.0.0.1
 ```
 ```
-r1#show ip route
+r2#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
 
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.0.0/30 is directly connected, Ethernet0/0
+L        10.0.0.2/32 is directly connected, Ethernet0/0
+      192.168.1.0/24 is variably subnetted, 4 subnets, 4 masks
+S        192.168.1.0/26 [1/0] via 10.0.0.1
+S        192.168.1.64/27 [1/0] via 10.0.0.1
+C        192.168.1.96/28 is directly connected, Ethernet0/1
+L        192.168.1.97/32 is directly connected, Ethernet0/1
 ```
 ## Configure two DHCPv4 Server on R1
 ```
