@@ -3,8 +3,8 @@
 ![](scheme.png)
 
 ## Chokyrdak
-Has two LANs: 10.20.88.0/24 and 10.20.89.0/24 with two Up-Links to ISP directly from R28 e0/0 and e0/1 to "Triada" AS520 with 70.70.57.5/24 and 70.70.58.76/24 networks connected.
-IP SLA to monitor link state will be configured on R28.
+Has two LANs: 10.20.88.0/24 and 10.20.89.0/24 with two Up-Links to AS520 "Triada" ISP directly from R28 e0/0 70.70.58.76/24 and e0/1 70.70.57.5/24.
+IP SLA will be configured on R28 to monitor link state.
 
 ### PBR setup on R28
 ```
