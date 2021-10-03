@@ -164,7 +164,7 @@
 | R21          | e0/1            | 100.15.10.1    | 255.255.255.252 |      |
 | R21          | e0/2            | 100.10.10.10   | 255.255.255.252 |      |
 
-## VPCxx IP configuration sample
+### VPCxx IP configuration sample
 ```
 VPCS> ip 10.xx.xx.2/24 10.xx.xx.1
 VPCS> save vpc
