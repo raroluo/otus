@@ -30,7 +30,7 @@ router ospf 1
  network 10.10.15.0 0.0.0.3 area 10
  network 10.10.15.12 0.0.0.3 area 10
  network 10.10.15.20 0.0.0.3 area 102
- network 60.60.154.75 0.0.0.0 area 0
+ network 15.15.15.15 0.0.0.0 area 0
 ```
 
 ### R14 routing table
