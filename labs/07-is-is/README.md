@@ -1,4 +1,4 @@
-# OSPF filtering
+# IS-IS 
 
 ![](scheme.png)
 
