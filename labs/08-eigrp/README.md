@@ -42,35 +42,17 @@ Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
 
 Gateway of last resort is 10.15.15.9 to network 0.0.0.0
 
-D*EX  0.0.0.0/0 [170/332800] via 10.15.15.9, 00:20:54, Ethernet0/0
-      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
-D        10.15.15.0/30 [90/332800] via 10.15.15.9, 00:52:50, Ethernet0/0
-D        10.15.15.4/30 [90/307200] via 10.15.15.9, 00:52:50, Ethernet0/0
-      70.0.0.0/24 is subnetted, 2 subnets
-D EX     70.70.44.0 [170/332800] via 10.15.15.9, 00:19:11, Ethernet0/0
-D EX     70.70.45.0 [170/332800] via 10.15.15.9, 00:20:54, Ethernet0/0
+D*    0.0.0.0/0 [90/307200] via 10.15.15.9, 00:01:04, Ethernet0/0
 
 R32#sh ipv6 route eigrp
-IPv6 Routing Table - default - 10 entries
+IPv6 Routing Table - default - 4 entries
 Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
        B - BGP, R - RIP, I1 - ISIS L1, I2 - ISIS L2
        IA - ISIS interarea, IS - ISIS summary, D - EIGRP, EX - EIGRP external
        ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
        O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
        ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2
-EX  ::/0 [170/307200]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:2042:0:2::/64 [90/332800]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:2042:0:3::/64 [90/307200]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:2042:0:5::/64 [90/307200]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:2042:0:15::/64 [90/358400]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:7070:44::/64 [90/332800]
-     via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
-D   2001:7070:45::/64 [90/332800]
+D   ::/0 [90/307200]
      via FE80::A8BB:CCFF:FE01:30, Ethernet0/0
 ```
 
@@ -84,6 +66,14 @@ router eigrp R16
    passive-interface
   exit-af-interface
   !
+  af-interface Ethernet0/3
+   summary-address 0.0.0.0 0.0.0.0
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 10.15.8.0 255.255.248.0
+  exit-af-interface
+  !
   topology base
   exit-af-topology
   network 10.15.15.4 0.0.0.3
@@ -95,6 +85,14 @@ router eigrp R16
   !
   af-interface Ethernet0/0
    passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   summary-address ::/0
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 2001:2042::/52
   exit-af-interface
   !
   topology base
@@ -111,6 +109,10 @@ router eigrp R17
    passive-interface
   exit-af-interface
   !
+  af-interface Ethernet0/1
+   summary-address 10.15.8.0 255.255.248.0
+  exit-af-interface
+  !
   topology base
   exit-af-topology
   network 10.15.15.0 0.0.0.3
@@ -121,6 +123,10 @@ router eigrp R17
   !
   af-interface Ethernet0/0
    passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 2001:2042::/52
   exit-af-interface
   !
   topology base
@@ -246,7 +252,7 @@ router eigrp R18
 
 ### R18 diagnostics
 ```
-R18#sh ip route eigrp
+R18#show ip route eigrp
 Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
@@ -258,21 +264,19 @@ Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
 
 Gateway of last resort is 70.70.45.1 to network 0.0.0.0
 
-      10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks
-D        10.15.15.8/30 [90/307200] via 10.15.15.6, 01:05:49, Ethernet0/0
+      10.0.0.0/8 is variably subnetted, 5 subnets, 3 masks
+D        10.15.8.0/21 [90/307200] via 10.15.15.6, 00:00:09, Ethernet0/0
+                      [90/307200] via 10.15.15.2, 00:00:09, Ethernet0/1
 
-R18#sh ipv6 route eigrp
-IPv6 Routing Table - default - 13 entries
+R18#show ipv6 route eigrp
+IPv6 Routing Table - default - 11 entries
 Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
        B - BGP, R - RIP, I1 - ISIS L1, I2 - ISIS L2
        IA - ISIS interarea, IS - ISIS summary, D - EIGRP, EX - EIGRP external
        ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
        O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
        ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2
-D   2001:2042:0:1::/64 [90/332800]
-     via FE80::A8BB:CCFF:FE01:10, Ethernet0/0
-D   2001:2042:0:5::/64 [90/307200]
-     via FE80::A8BB:CCFF:FE01:10, Ethernet0/0
-D   2001:2042:0:15::/64 [90/307200]
+D   2001:2042::/52 [90/307200]
      via FE80::A8BB:CCFF:FE01:1010, Ethernet0/1
+     via FE80::A8BB:CCFF:FE01:10, Ethernet0/0
 ```
