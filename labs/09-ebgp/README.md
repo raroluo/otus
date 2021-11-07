@@ -8,7 +8,19 @@
 - eBGP between R18 (AS2042) - R24/26 (AS520);
 - eBGP between R22 (AS101) - R21 (AS301);
 - eBGP between R21 (AS301) - R24 (AS520);
-- AS1001 can reach AS2042 and vice versa 
+- AS1001 can reach AS2042 and vice versa
+
+### Main conceepts
+
+- Instead of setting IP SLA using explicit BGP session close command "neighbor a.b.c.d fall-over";
+- MSK (AS1001) and SPB (AS2042) will get summary route information by "network" command. To make BGP announce networks
+from routing table "Null 0", interface "Null 0" with static routing will be added too "ip route a.b.c.d mask Null0";
+- Kitorn, Lamas, and Triada will annonce default route using BGP using "neighbor a.b.c.d default-originate";
+- Kitorn and Lamas will annonce our summary routes to their networks;
+- Triada will annonce all internal networks because AS nees to anonce all internal networks, but offices shoud get only summary
+routes (needs filtering which will be implemented in next labs);
+- Triada will not have full mesh between routers (iBGP will be implemented in next labs);
+- Triada will redistribute connected and static networks to have inter-AS binding by using "redistribute connected" and "redistribute static"
 
 ### eBGP R14-R22 and R15-R21
 ```
@@ -18,6 +30,18 @@ router bgp 1001
  bgp router-id 14.14.14.14
  bgp log-neighbor-changes
  neighbor 50.50.23.1 remote-as 101
+ neighbor 50.50.23.1 fall-over
+ !
+ address-family ipv4
+  network 10.10.0.0 mask 255.255.0.0
+  neighbor 50.50.23.1 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 0.0.0.0 0.0.0.0 50.50.23.1
+ip route 10.10.0.0 255.255.0.0 Null0
 ```
 ```
 R22#sh run
@@ -27,6 +51,17 @@ router bgp 101
  bgp log-neighbor-changes
  neighbor 50.50.23.145 remote-as 1001
  neighbor 100.15.10.1 remote-as 301
+ !
+ address-family ipv4
+  neighbor 50.50.23.145 activate
+  neighbor 50.50.23.145 default-originate
+  neighbor 100.15.10.1 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 50.50.0.0 255.255.0.0 Null0
 ```
 ```
 R15#sh run
@@ -35,6 +70,18 @@ router bgp 1001
  bgp router-id 15.15.15.15
  bgp log-neighbor-changes
  neighbor 60.60.154.1 remote-as 301
+ neighbor 60.60.154.1 fall-over
+ !
+ address-family ipv4
+  network 10.10.0.0 mask 255.255.0.0
+  neighbor 60.60.154.1 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 0.0.0.0 0.0.0.0 60.60.154.1
+ip route 10.10.0.0 255.255.0.0 Null0
 ```
 ```
 R21#sh run
@@ -45,6 +92,19 @@ router bgp 301
  neighbor 60.60.154.75 remote-as 1001
  neighbor 100.10.10.9 remote-as 520
  neighbor 100.15.10.2 remote-as 101
+ !
+ address-family ipv4
+  network 60.60.0.0 mask 255.255.0.0
+  neighbor 60.60.154.75 activate
+  neighbor 60.60.154.75 default-originate
+  neighbor 100.10.10.9 activate
+  neighbor 100.15.10.2 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 60.60.0.0 255.255.0.0 Null0
 ```
 ### R14-R22 and R15-R21 diagnostics
 ```
@@ -90,7 +150,22 @@ router bgp 2042
  bgp router-id 18.18.18.18
  bgp log-neighbor-changes
  neighbor 70.70.44.1 remote-as 520
+ neighbor 70.70.44.1 fall-over
  neighbor 70.70.45.1 remote-as 520
+ neighbor 70.70.45.1 fall-over
+ !
+ address-family ipv4
+  network 10.15.0.0 mask 255.255.0.0
+  neighbor 70.70.44.1 activate
+  neighbor 70.70.45.1 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 0.0.0.0 0.0.0.0 70.70.45.1
+ip route 0.0.0.0 0.0.0.0 70.70.44.1
+ip route 10.15.0.0 255.255.0.0 Null0
 ```
 ```
 R24#sh run
@@ -101,6 +176,18 @@ router bgp 520
  neighbor 10.70.21.2 remote-as 520
  neighbor 70.70.45.2 remote-as 2042
  neighbor 100.10.10.10 remote-as 301
+ !
+ address-family ipv4
+  neighbor 10.70.21.2 activate
+  neighbor 70.70.45.2 activate
+  neighbor 70.70.45.2 default-originate
+  neighbor 100.10.10.10 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 10.70.0.0 255.255.0.0 Null0
 ```
 ```
 R26#sh run
@@ -110,6 +197,20 @@ router bgp 520
  bgp log-neighbor-changes
  neighbor 10.70.21.1 remote-as 520
  neighbor 70.70.44.2 remote-as 2042
+ !
+ address-family ipv4
+  network 10.70.0.0 mask 255.255.0.0
+  redistribute connected
+  redistribute static
+  neighbor 10.70.21.1 activate
+  neighbor 70.70.44.2 activate
+  neighbor 70.70.44.2 default-originate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 10.70.0.0 255.255.0.0 Null0
 ```
 ### R18-R24/26 diagnostics
 ```
@@ -149,6 +250,18 @@ router bgp 101
  bgp log-neighbor-changes
  neighbor 50.50.23.145 remote-as 1001
  neighbor 100.15.10.1 remote-as 301
+ !
+ address-family ipv4
+  neighbor 50.50.23.145 activate
+  neighbor 50.50.23.145 default-originate
+  neighbor 100.15.10.1 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 50.50.0.0 255.255.0.0 Null0
+!
 ```
 ```
 R21#sh run
@@ -159,6 +272,19 @@ router bgp 301
  neighbor 60.60.154.75 remote-as 1001
  neighbor 100.10.10.9 remote-as 520
  neighbor 100.15.10.2 remote-as 101
+ !
+ address-family ipv4
+  network 60.60.0.0 mask 255.255.0.0
+  neighbor 60.60.154.75 activate
+  neighbor 60.60.154.75 default-originate
+  neighbor 100.10.10.9 activate
+  neighbor 100.15.10.2 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 60.60.0.0 255.255.0.0 Null0
 ```
 ### R22-R21 diagnostics
 ```
@@ -190,6 +316,19 @@ router bgp 301
  neighbor 60.60.154.75 remote-as 1001
  neighbor 100.10.10.9 remote-as 520
  neighbor 100.15.10.2 remote-as 101
+ !
+ address-family ipv4
+  network 60.60.0.0 mask 255.255.0.0
+  neighbor 60.60.154.75 activate
+  neighbor 60.60.154.75 default-originate
+  neighbor 100.10.10.9 activate
+  neighbor 100.15.10.2 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 60.60.0.0 255.255.0.0 Null0
 ```
 ```
 R24#sh run
@@ -200,6 +339,18 @@ router bgp 520
  neighbor 10.70.21.2 remote-as 520
  neighbor 70.70.45.2 remote-as 2042
  neighbor 100.10.10.10 remote-as 301
+ !
+ address-family ipv4
+  neighbor 10.70.21.2 activate
+  neighbor 70.70.45.2 activate
+  neighbor 70.70.45.2 default-originate
+  neighbor 100.10.10.10 activate
+ exit-address-family
+!
+!
+no ip http server
+!
+ip route 10.70.0.0 255.255.0.0 Null0
 ```
 ### R21-R24 diagnostics
 ```
